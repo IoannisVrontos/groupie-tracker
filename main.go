@@ -5,6 +5,7 @@ import (
 	"groupie-tracker/data"
 	"groupie-tracker/handlers"
 	"net/http"
+	"strconv"
 )
 
 func main() {
@@ -17,6 +18,15 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handlers.HomeHandler(w, r, artists)
+	})
+
+	http.HandleFunc("/artist/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.URL.Path[len("/artist/"):])
+		if err != nil {
+			http.Error(w, "Invalid artist ID", http.StatusBadRequest)
+			return
+		}
+		handlers.ArtistHandler(w, r, artists[id-1], artists[id-1].Locations, artists[id-1].Relations)
 	})
 
 	http.ListenAndServe(":8080", nil)

@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-type Artist struct {
-	Name      string
-	ImageLink string
+type PageData struct {
+	Loading bool
+	Artists []data.Artist
 }
 
 // Global variable to store parsed template (parsed once at server startup)
@@ -26,17 +26,7 @@ func init() {
 
 // HomeHandler handles the home page rendering
 func HomeHandler(w http.ResponseWriter, r *http.Request, artists []data.Artist) {
-	// Convert artists from data.Artist to Artist
-	artistData := []Artist{}
-	for _, artist := range artists {
-		artistData = append(artistData, Artist{
-			Name:      artist.Name,
-			ImageLink: artist.Image, // Assuming Image field in data.Artist
-		})
-	}
-
-	// Execute the template with the artist data
-	err := tmpl.Execute(w, artistData)
+	err := tmpl.Execute(w, PageData{Loading: false, Artists: artists})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
