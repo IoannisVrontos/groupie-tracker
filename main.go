@@ -1,24 +1,41 @@
 package main
 
 import (
-	"fmt"
 	"groupie-tracker/data"
 	"groupie-tracker/handlers"
 	"net/http"
 	"strconv"
 )
 
+
+
 func main() {
-	artists, err := data.GetArtists()
-	if err != nil {
-		fmt.Println("Error getting artists: ", err)
-	}
+
+	artistsChan := make(chan []data.Artist)
+	errChan := make(chan error)
+
+	currentState := data.Loading
+		var artists []data.Artist
+		var err error
+
+	go func() {
+		artists, err = data.GetArtists()
+		if err != nil {
+			errChan <- err
+			currentState = data.Error
+			return
+		}
+		artistsChan <- artists
+		currentState = data.Success
+
+	}()
+
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			handlers.HomeHandler(w, r,currentState, artists)
+		})
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.HomeHandler(w, r, artists)
-	})
 
 	http.HandleFunc("/artist/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(r.URL.Path[len("/artist/"):])
