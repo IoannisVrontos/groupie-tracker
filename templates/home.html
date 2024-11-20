@@ -23,12 +23,6 @@
 </head>
 <body>
     <div id="__next">
-        <!-- Navigation -->
-        <nav class="main-nav">
-            <div class="nav-content">
-                <h1>Artists Gallery</h1>
-            </div>
-        </nav>
 
         <div class="card-grid">
             {{range .}}
@@ -41,18 +35,6 @@
             </div>
             {{end}}
         </div>
-
-        <style>
-            .card-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 2rem;
-                max-width: var(--container-width);
-                margin: 0 auto;
-                padding: var(--spacing-4);
-            }
-        </style>
-
     </div>
 </body>
 </html>
