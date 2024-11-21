@@ -6,18 +6,16 @@ import (
 	"groupie-tracker/handlers"
 	"net/http"
 	"strconv"
-	"sync"
 )
 
 func main() {
 	currentState := data.Loading
 	var artists []data.Artist
-	var mu sync.RWMutex
 
 	// Run GetArtists in a goroutine
 	go func() {
 		fetchedArtists, err := data.GetArtists()
-		mu.Lock()
+		
 		if err != nil {
 			currentState = data.Error
 			fmt.Println("Failed to fetch artists:", err)
@@ -25,12 +23,10 @@ func main() {
 			artists = fetchedArtists
 			currentState = data.Success
 		}
-		mu.Unlock()
+		
 	}()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		mu.RLock()
-		defer mu.RUnlock()
 		handlers.HomeHandler(w, r, currentState, artists)
 	})
 

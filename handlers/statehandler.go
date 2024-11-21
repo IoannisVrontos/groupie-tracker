@@ -6,7 +6,6 @@ import (
 	"groupie-tracker/data"
 	"net/http"
 	"sync"
-	"time"
 )
 
 func StateHandler(w http.ResponseWriter, r *http.Request, mu *sync.RWMutex, currentState *data.State) {
@@ -35,6 +34,6 @@ func StateHandler(w http.ResponseWriter, r *http.Request, mu *sync.RWMutex, curr
 		fmt.Fprintf(w, "data: %s\n\n", data)
 		w.(http.Flusher).Flush()
 
-		time.Sleep(1 * time.Second) // Check state periodically
+		
 	}
 }
