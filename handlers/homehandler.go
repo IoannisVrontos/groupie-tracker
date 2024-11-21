@@ -31,8 +31,10 @@ func init() {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request, state data.State, artists []data.Artist) {
+	
+	
+	
 	data := PageData{State: state, Artists: artists}
-
 	if err := homeTemplate.Execute(w, data); err != nil {
 		log.Printf("Error executing home template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

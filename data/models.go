@@ -1,9 +1,5 @@
 package data
 
-import (
-	"fmt"
-)
-
 type Artist struct {
 	ID               int      `json:"id"`
 	Image            string   `json:"image"`
@@ -11,30 +7,14 @@ type Artist struct {
 	Members          []string `json:"members"`
 	CreationDate     int      `json:"creationDate"`
 	FirstAlbum       string   `json:"firstAlbum"`
-	Locations        Locations
-	ConcertDates     Dates
-	Relations        Relations
+	Relations        map[string][]string
 	LocationsLink    string `json:"locations"`
 	ConcertDatesLink string `json:"concertDates"`
 	RelationsLink    string `json:"relations"`
 }
 
-func (a *Artist) Init() {
-	locations, err := GetLocations(a.LocationsLink)
-	if err != nil {
-		fmt.Println("Error getting locations: ", err)
-	}
-	a.Locations = locations
-	dates, err := GetDates(a.ConcertDatesLink)
-	if err != nil {
-		fmt.Println("Error getting dates: ", err)
-	}
-	a.ConcertDates = dates
-	relations, err := GetRelations(a.RelationsLink)
-	if err != nil {
-		fmt.Println("Error getting relations: ", err)
-	}
-	a.Relations = relations
+type AllLocations struct {
+	Index []Locations `json:"index"`
 }
 
 type Locations struct {
@@ -44,17 +24,17 @@ type Locations struct {
 	Dates     Dates
 }
 
-func (l *Locations) Init() {
-	dates, err := GetDates(l.DatesLink)
-	if err != nil {
-		fmt.Println("Error getting dates: ", err)
-	}
-	l.Dates = dates
+type AllRelations struct {
+	Index []Relations `json:"index"`
 }
 
 type Relations struct {
 	ID             int                 `json:"id"`
 	DatesLocations map[string][]string `json:"datesLocations"`
+}
+
+type AllDates struct {
+	Index []Dates `json:"index"`
 }
 
 type Dates struct {
@@ -65,7 +45,7 @@ type Dates struct {
 type State int
 
 const (
-    Loading State = iota // Loading == 0
-    Success              // Success == 1
-    Error                // Error == 2
+	Loading State = iota // Loading == 0
+	Success              // Success == 1
+	Error                // Error == 2
 )

@@ -6,31 +6,21 @@ import (
 	"groupie-tracker/handlers"
 	"net/http"
 	"strconv"
-	"sync"
 )
 
 func main() {
 	currentState := data.Loading
 	var artists []data.Artist
-	var mu sync.RWMutex
-
-	// Run GetArtists in a goroutine
-	go func() {
-		fetchedArtists, err := data.GetArtists()
-		mu.Lock()
-		if err != nil {
-			currentState = data.Error
-			fmt.Println("Failed to fetch artists:", err)
-		} else {
-			artists = fetchedArtists
-			currentState = data.Success
-		}
-		mu.Unlock()
-	}()
+	fetchedArtists, err := data.InitializeData()
+	if err != nil {
+		currentState = data.Error
+		fmt.Println("Failed to fetch artists:", err)
+	} else {
+		artists = fetchedArtists
+		currentState = data.Success
+	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		mu.RLock()
-		defer mu.RUnlock()
 		handlers.HomeHandler(w, r, currentState, artists)
 	})
 
@@ -48,6 +38,12 @@ func main() {
 	})
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	http.ListenAndServe(":8080", nil)
+	fmt.Printf("\rServer is running on port http://localhost:8080 ...\n")
+	port := 8080
+	err = http.ListenAndServe(":8080", nil)
+	for err != nil {
+		port++
+		fmt.Printf("\033[A\rServer is running on port http://localhost:%d ...\n", port)
+		err = http.ListenAndServe(":"+strconv.Itoa(port), nil)
+	}
 }

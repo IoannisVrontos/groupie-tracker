@@ -4,50 +4,49 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
-func GetDates(link string) (Dates, error) {
-	var dates Dates
-	resp, err := http.Get(link)
+func GetDates() (AllDates, error) {
+	var dates AllDates
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/dates")
 	if err != nil {
-		return Dates{}, fmt.Errorf("failed to get dates: %w", err)
+		return AllDates{}, fmt.Errorf("failed to get dates: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if err := json.NewDecoder(resp.Body).Decode(&dates); err != nil {
-		return Dates{}, fmt.Errorf("failed to decode dates: %w", err)
+		return AllDates{}, fmt.Errorf("failed to decode dates: %w", err)
 	}
 
 	return dates, nil
 }
-func GetLocations(link string) (Locations, error) {
-	var locations Locations
-	resp, err := http.Get(link)
+func GetLocations() (AllLocations, error) {
+	var locations AllLocations
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/locations")
 	if err != nil {
-		return Locations{}, fmt.Errorf("failed to get locations: %w", err)
+		return AllLocations{}, fmt.Errorf("failed to get locations: %w", err)
 	}
-	defer resp.Body.Close()
-
 	if resp.StatusCode == http.StatusOK {
-		if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
-			return Locations{}, fmt.Errorf("failed to decode locations: %w", err)
+		err := json.NewDecoder(resp.Body).Decode(&locations)
+		if err != nil {
+			return AllLocations{}, fmt.Errorf("failed to decode locations: %w", err)
 		}
 	}
+	defer resp.Body.Close()
 	return locations, nil
 }
 
-
-
-func GetRelations(link string) (Relations, error) {
-	var relations Relations
-	resp, err := http.Get(link)
+func GetRelations() (AllRelations, error) {
+	var relations AllRelations
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/relation")
 	if err != nil {
-		return Relations{}, fmt.Errorf("failed to get relations: %w", err)
+		return AllRelations{}, fmt.Errorf("failed to get relations: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if err := json.NewDecoder(resp.Body).Decode(&relations); err != nil {
-		return Relations{}, fmt.Errorf("failed to decode relations: %w", err)
+		return AllRelations{}, fmt.Errorf("failed to decode relations: %w", err)
 	}
 
 	return relations, nil
@@ -66,9 +65,35 @@ func GetArtists() ([]Artist, error) {
 		return []Artist{}, fmt.Errorf("failed to decode artists: %w", err)
 	}
 
-	for i := range artists {
-		artists[i].Init()
-	}
-
 	return artists, nil
+}
+
+func InitializeData() ([]Artist, error) {
+	fetchedArtists, err := GetArtists()
+	if err != nil {
+		return []Artist{}, err
+	}
+	relations, err := GetRelations()
+	if err != nil {
+		return []Artist{}, err
+	}
+	for i := range relations.Index {
+		relations.Index[i].DatesLocations = mapDatesLocations(relations.Index[i].DatesLocations)
+	}
+	for i := range fetchedArtists {
+		fetchedArtists[i].Relations = relations.Index[i].DatesLocations
+	}
+	return fetchedArtists, nil
+}
+
+func mapDatesLocations(datesLocations map[string][]string) map[string][]string {
+	newDatesLocations := make(map[string][]string)
+	for k, v := range datesLocations {
+		newKey := strings.ReplaceAll(k, "-", " ")
+		newKey = strings.ReplaceAll(newKey, "_", " ")
+		newKey = strings.ReplaceAll(newKey, "uk", "UK")
+		newKey = strings.ReplaceAll(newKey, "usa", "USA")
+		newDatesLocations[newKey] = v
+	}
+	return newDatesLocations
 }

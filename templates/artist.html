@@ -1,93 +1,21 @@
 <!DOCTYPE html>
-<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Artist.Name}}</title>
+    <link rel="stylesheet" href="/static/css/artist.css">
 </head>
-<body>
-<section class="ezy__about15 dark-gray" id="ezy__about15">
-<div class="ezy__about15-shape"></div>
-<div class="container">
-    <div class="row align-items-center">
-    <div class="col-12 col-lg-4 mb-4 mb-lg-0">
-        <div>
-        <img src="{{.Artist.Image}}" alt="{{.Artist.Name}}" class="img-fluid" />
+<html>
+    <head>
+        <title>{{.Artist.Name}}</title>
+    </head>
+    <body>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: var(--container-width); margin: 0 auto; padding: var(--spacing-4);">
+            {{range $location, $dates := .Artist.Relations}}
+            <div class="book">
+                {{range $dates}}<br>{{.}}<br>{{end}}
+                <div class="cover">
+                    {{$location}}
+                </div>
+            </div>
+            {{end}}
         </div>
-    </div>
-    <div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
-        <div>
-        <h1 class="fw-bold mb-3">{{.Artist.Name}}</h1>
-        <p class="mb-0 opacity-75">
-            Members: {{range $i, $member := .Artist.Members}}{{if $i}}, {{end}}{{$member}}{{end}}
-            <br>
-            Creation Date: {{.Artist.CreationDate}}
-            <br>
-            First Album: {{.Artist.FirstAlbum}}
-        </p>
-        </div>
-    </div>
-    <div class="col-12 col-md-6 col-lg-4">
-        <div>
-        <p class="opacity-75 mt-5 mb-0">
-        </p>
-        </div>
-    </div>
-    </div>
-</div>
-</section>
-</body>
+    </body>
 </html>
-
-<style>
-.ezy__about15 {
-/* Bootstrap variables */
---bs-body-color: #1e2329;
---bs-body-bg: rgb(255, 255, 255);
-
-/* Easy Frontend variables */
---ezy-theme-color: rgb(13, 110, 253);
---ezy-theme-color-rgb: 13, 110, 253;
-
-background-color: var(--bs-body-bg);
-color: var(--bs-body-color);
-overflow: hidden;
-padding: 60px 0;
-position: relative;
-z-index: 1;
-}
-
-/* Gray Block Style */
-.gray .ezy__about15,
-.ezy__about15.gray {
-/* Bootstrap variables */
---bs-body-bg: rgb(246, 246, 246);
-}
-
-/* Dark Gray Block Style */
-.dark-gray .ezy__about15,
-.ezy__about15.dark-gray {
-/* Bootstrap variables */
---bs-body-color: #ffffff;
---bs-body-bg: rgb(30, 39, 53);
-}
-
-/* Dark Block Style */
-.dark .ezy__about15,
-.ezy__about15.dark {
-/* Bootstrap variables */
---bs-body-color: #ffffff;
---bs-body-bg: rgb(11, 23, 39);
-}
-
-.ezy__about15-shape {
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-width: 30vw;
-background-color: rgba(var(--ezy-theme-color-rgb), 0.3);
-z-index: -1;
-}
-</style>

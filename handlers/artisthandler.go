@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"fmt"
 	"groupie-tracker/data"
 	"log"
 	"net/http"
-	"strings"
 )
 
 type ArtistPageData struct {
@@ -23,10 +21,6 @@ func ArtistHandler(w http.ResponseWriter, r *http.Request, artists []data.Artist
 	selectedArtist := artists[id-1]
 	data := ArtistPageData{
 		Artist: selectedArtist,
-	}
-	for location, dates := range selectedArtist.Relations.DatesLocations {
-		datesString := strings.Join(dates, ", ")
-		data.LocationsAndDates = append(data.LocationsAndDates, fmt.Sprintf("%s: %s", location, datesString))
 	}
 
 	// Render artist template
