@@ -12,33 +12,29 @@ type PageData struct {
 	Artists []data.Artist
 }
 
-// Global variable to store parsed template (parsed once at server startup)
-var tmpl *template.Template
+var (
+	homeTemplate   *template.Template
+	artistTemplate *template.Template
+)
 
-// Initialize the template once when the application starts
 func init() {
 	var err error
-	tmpl, err = template.ParseFiles("templates/home.html")
+	homeTemplate, err = template.ParseFiles("templates/home.html")
 	if err != nil {
-		log.Fatal("Error parsing template:", err)
+		log.Fatalf("Error parsing home template: %v", err)
+	}
+
+	artistTemplate, err = template.ParseFiles("templates/artist.html")
+	if err != nil {
+		log.Fatalf("Error parsing artist template: %v", err)
 	}
 }
 
-// HomeHandler handles the home page rendering
-func HomeHandler(w http.ResponseWriter, r *http.Request, artists []data.Artist) {
-	// Convert artists from data.Artist to Artist
-	artistData := []Artist{}
-	for _, artist := range artists {
-		artistData = append(artistData, Artist{
-			Name:      artist.Name,
-			ImageLink: artist.Image, // Assuming Image field in data.Artist
-		})
-	}
+func HomeHandler(w http.ResponseWriter, r *http.Request, state data.State, artists []data.Artist) {
+	data := PageData{State: state, Artists: artists}
 
-	// Execute the template with the artist data
-	err := tmpl.Execute(w, artistData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if err := homeTemplate.Execute(w, data); err != nil {
+		log.Printf("Error executing home template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }

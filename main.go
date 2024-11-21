@@ -1,41 +1,38 @@
 package main
 
 import (
+	"fmt"
 	"groupie-tracker/data"
 	"groupie-tracker/handlers"
 	"net/http"
 	"strconv"
+	"sync"
 )
 
-
-
 func main() {
-
-	artistsChan := make(chan []data.Artist)
-	errChan := make(chan error)
-
 	currentState := data.Loading
-		var artists []data.Artist
-		var err error
+	var artists []data.Artist
+	var mu sync.RWMutex
 
+	// Run GetArtists in a goroutine
 	go func() {
-		artists, err = data.GetArtists()
+		fetchedArtists, err := data.GetArtists()
+		mu.Lock()
 		if err != nil {
-			errChan <- err
 			currentState = data.Error
-			return
+			fmt.Println("Failed to fetch artists:", err)
+		} else {
+			artists = fetchedArtists
+			currentState = data.Success
 		}
-		artistsChan <- artists
-		currentState = data.Success
-
+		mu.Unlock()
 	}()
 
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			handlers.HomeHandler(w, r,currentState, artists)
-		})
-
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		mu.RLock()
+		defer mu.RUnlock()
+		handlers.HomeHandler(w, r, currentState, artists)
+	})
 
 	http.HandleFunc("/artist/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(r.URL.Path[len("/artist/"):])
@@ -43,8 +40,14 @@ func main() {
 			http.Error(w, "Invalid artist ID", http.StatusBadRequest)
 			return
 		}
-		handlers.ArtistHandler(w, r, artists[id-1], artists[id-1].Locations, artists[id-1].Relations)
+		if id < 1 || id > len(artists) {
+			http.Error(w, "Artist not found", http.StatusNotFound)
+			return
+		}
+		handlers.ArtistHandler(w, r, artists, id)
 	})
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	http.ListenAndServe(":8080", nil)
 }

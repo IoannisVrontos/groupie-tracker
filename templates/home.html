@@ -24,8 +24,10 @@
 <body>
     <div id="__next">
         {{if eq .State 0}}
-        <div class="loading">
-            <p>Loading...</p>
+        <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
         {{else if eq .State 1}}
         <div class="card-grid">
@@ -33,16 +35,16 @@
             <div class="card">
                 <!-- Uses Image and Name from ArtistData -->
                 <img src="{{.Image}}" alt="{{.Name}}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;"/>
-                <div class="card__content" style="cursor: pointer;">
-                    <!-- Uses nested Artist.Name from ArtistDetails -->
-                    <p class="card__title">{{.Name}}</p>
-                    <!-- Uses other fields from ArtistDetails -->
-                    <p class="card__description">
+                <form method="POST">
+                    <div class="card__content" name="artistID" style="cursor: pointer;" data-id="{{.ID}}">
+                        <p class="card__title">{{.Name}}</p>
+                        <p class="card__description">
                         <b style="color: #131313;">Members:</b> {{range $i, $member := .Members}}{{if $i}}, {{end}}{{$member}}{{end}}<br>
                         <b style="color: #131313;">Creation Date:</b> {{.CreationDate}}<br>
                         <b style="color: #131313;">First Album:</b> {{.FirstAlbum}}
-                    </p>
-                </div>
+                        </p>
+                    </div>
+                </form>
             </div>
             {{end}}
         </div>
@@ -51,7 +53,7 @@
             <p>Error loading artists</p>
         </div>
         {{end}}
-
     </div>
+    <script src="/static/js/navigation.js"></script>
 </body>
 </html>

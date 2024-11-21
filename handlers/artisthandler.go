@@ -1,30 +1,37 @@
 package handlers
 
 import (
+	"fmt"
 	"groupie-tracker/data"
-	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type ArtistPageData struct {
-	Artist    data.Artist
-	Locations data.Locations
-	Relations data.Relations
+	Artist            data.Artist
+	LocationsAndDates []string
 }
 
-func init() {
-	var err error
-	tmpl, err = template.ParseFiles("templates/artist.html")
-	if err != nil {
-		log.Fatal("Error parsing template:", err)
+func ArtistHandler(w http.ResponseWriter, r *http.Request, artists []data.Artist, id int) {
+	if id < 0 || id >= len(artists) {
+		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
+		return
 	}
-}
 
-func ArtistHandler(w http.ResponseWriter, r *http.Request, artist data.Artist, locations data.Locations, relations data.Relations) {
-	data := ArtistPageData{Artist: artist, Locations: locations, Relations: relations}
-	err := tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// Build artist page data
+	selectedArtist := artists[id-1]
+	data := ArtistPageData{
+		Artist: selectedArtist,
+	}
+	for location, dates := range selectedArtist.Relations.DatesLocations {
+		datesString := strings.Join(dates, ", ")
+		data.LocationsAndDates = append(data.LocationsAndDates, fmt.Sprintf("%s: %s", location, datesString))
+	}
+
+	// Render artist template
+	if err := artistTemplate.Execute(w, data); err != nil {
+		log.Printf("Error executing artist template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
