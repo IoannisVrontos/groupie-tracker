@@ -40,7 +40,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	fmt.Printf("\rServer is running on port http://localhost:8080 ...\n")
 	port := 8080
-	err = http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe("localhost:8080", nil)
 	for err != nil {
 		port++
 		fmt.Printf("\033[A\rServer is running on port http://localhost:%d ...\n", port)
