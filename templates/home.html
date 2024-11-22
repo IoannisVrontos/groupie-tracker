@@ -20,6 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/css/variables.css"/>
     <link rel="stylesheet" href="/static/css/main.css"/>
+    <link type="image/png" sizes="32x32" rel="icon" href="/static/favicon.ico">
 </head>
 <body>
     <div id="__next">
@@ -31,6 +32,7 @@
         </div>
         {{else if eq .State 1}}
         <div class="card-grid">
+
             {{range .Artists}}  <!-- Iterates through []ArtistData -->
             <a href="/artist/{{.ID}}">
             <div class="card">
@@ -56,6 +58,5 @@
         </div>
         {{end}}
     </div>
-    {% comment %} <script src="/static/js/navigation.js"></script> {% endcomment %}
 </body>
 </html>

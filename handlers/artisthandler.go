@@ -12,7 +12,7 @@ type ArtistPageData struct {
 }
 
 func ArtistHandler(w http.ResponseWriter, r *http.Request, artists []data.Artist, id int) {
-	if id < 0 || id >= len(artists) {
+	if id < 0 || id > len(artists) {
 		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
 		return
 	}

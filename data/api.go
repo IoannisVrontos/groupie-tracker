@@ -89,11 +89,20 @@ func InitializeData() ([]Artist, error) {
 func mapDatesLocations(datesLocations map[string][]string) map[string][]string {
 	newDatesLocations := make(map[string][]string)
 	for k, v := range datesLocations {
-		newKey := strings.ReplaceAll(k, "-", " ")
-		newKey = strings.ReplaceAll(newKey, "_", " ")
-		newKey = strings.ReplaceAll(newKey, "uk", "UK")
-		newKey = strings.ReplaceAll(newKey, "usa", "USA")
+		newKey := strings.ReplaceAll(k, "_", " ")
+		newKey = strings.ReplaceAll(newKey, "-", ", ")
+		newKey = strings.ReplaceAll(newKey, newKey, capitalizeWords(newKey))
+		newKey = strings.ReplaceAll(newKey, "Uk", "UK")
+		newKey = strings.ReplaceAll(newKey, "Usa", "USA")
 		newDatesLocations[newKey] = v
 	}
 	return newDatesLocations
+}
+
+func capitalizeWords(sentence string) string {
+	words := strings.Fields(sentence)
+	for i, word := range words {
+		words[i] = strings.ToUpper(string(word[0])) + word[1:]
+	}
+	return strings.Join(words, " ")
 }

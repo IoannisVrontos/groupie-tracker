@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/artist.css">
+    <link type="image/png" sizes="32x32" rel="icon" href="/static/favicon.ico">
 </head>
 <html>
     <head>
         <title>{{.Artist.Name}}</title>
     </head>
     <body>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: var(--container-width); margin: 0 auto; padding: var(--spacing-4);">
+        <div class="concert-list">
             {{range $location, $dates := .Artist.Relations}}
-            <div class="book">
-                {{range $dates}}<br>{{.}}<br>{{end}}
-                <div class="cover">
-                    {{$location}}
+            <div class="concert-item">
+                <div class="concert-info">
+                    <h2>{{$location}}</h2>
                 </div>
+                {{range $dates}}
+                <p class="concert-date">{{.}}</p>
+                {{end}}
             </div>
             {{end}}
         </div>
