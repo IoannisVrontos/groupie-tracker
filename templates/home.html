@@ -24,15 +24,7 @@
 </head>
 <body>
     <div id="__next">
-        {{if eq .State 0}}
-        <div class="loader">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-        {{else if eq .State 1}}
         <div class="card-grid">
-
             {{range .Artists}}  <!-- Iterates through []ArtistData -->
             <a href="/artist/{{.ID}}">
             <div class="card">
@@ -52,11 +44,6 @@
         </a>
             {{end}}
         </div>
-        {{else if eq .State 2}}
-        <div class="error">
-            <p>Error loading artists</p>
-        </div>
-        {{end}}
     </div>
 </body>
 </html>
