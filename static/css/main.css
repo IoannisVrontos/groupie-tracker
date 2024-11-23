@@ -109,6 +109,8 @@ body {
     visibility: visible;
     top: 50%;
     transform: translate(-50%, -50%) scale(1);
+    position: absolute;
+    z-index: 10;
 }
 
 .popup img{

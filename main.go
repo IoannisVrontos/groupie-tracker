@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"groupie-tracker/data"
 	"groupie-tracker/handlers"
@@ -19,6 +20,13 @@ func main() {
 		artists = fetchedArtists
 		currentState = data.Success
 	}
+
+	http.HandleFunc("/api/artists", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(artists); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handlers.HomeHandler(w, r, currentState, artists)
@@ -46,4 +54,5 @@ func main() {
 		fmt.Printf("\033[A\rServer is running on port http://localhost:%d ...\n", port)
 		err = http.ListenAndServe(":"+strconv.Itoa(port), nil)
 	}
+
 }
