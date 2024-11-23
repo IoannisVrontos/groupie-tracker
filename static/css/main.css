@@ -95,7 +95,7 @@ body {
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.1);
@@ -109,7 +109,7 @@ body {
     visibility: visible;
     top: 50%;
     transform: translate(-50%, -50%) scale(1);
-    position: absolute;
+    position: fixed;
     z-index: 10;
 }
 
