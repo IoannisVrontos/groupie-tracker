@@ -41,11 +41,3 @@ type Dates struct {
 	ID    int      `json:"id"`
 	Dates []string `json:"dates"`
 }
-
-type State int
-
-const (
-	Loading State = iota // Loading == 0
-	Success              // Success == 1
-	Error                // Error == 2
-)

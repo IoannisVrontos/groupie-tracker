@@ -10,15 +10,15 @@ import (
 )
 
 func main() {
-	currentState := data.Loading
+	
 	var artists []data.Artist
 	fetchedArtists, err := data.InitializeData()
 	if err != nil {
-		currentState = data.Error
+		
 		fmt.Println("Failed to fetch artists:", err)
 	} else {
 		artists = fetchedArtists
-		currentState = data.Success
+		
 	}
 
 	http.HandleFunc("/api/artists", func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +29,7 @@ func main() {
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.HomeHandler(w, r, currentState, artists)
+		handlers.HomeHandler(w, r,  artists)
 	})
 
 	http.HandleFunc("/artist/{id}", func(w http.ResponseWriter, r *http.Request) {
