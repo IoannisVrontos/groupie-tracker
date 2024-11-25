@@ -11,7 +11,7 @@ body {
     padding-top: var(--header-height);
     overflow-y: auto;
     -webkit-font-smoothing: antialiased;
-    background-color: black;
+    background-color: #333;
 }
 
 /* Layout */
@@ -89,37 +89,43 @@ body {
     transform: scale(0.98);
 }
 
-.popup{
-    width: 400px;
+.popup {
+    width: 700px;
     background: #fff;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
     border-radius: 6px;
     position: fixed;
-    top: 0;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.1);
     text-align: center;
     padding: 0 30px 60px;
     color: #333;
     visibility: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: show; /* Hide overflow for the main container */
 }
 
-.open-popup{
-    visibility: visible;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(1);
-    position: fixed;
-    z-index: 10;
-}
-
-.popup img{
+.popup-image {
     width: 100px;
-    margin-top: -50px;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
+    position: absolute; /* Position the image absolutely */
+    top: -50px; /* Position it to overlap the popup */
+    left: 50%;
+    transform: translateX(-50%);
     border-radius: 50%;
-    box-shadow: 0 2pc 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1; /* Ensure it stays above the content */
+}
+
+.popup-content {
+    margin-top: 50px;
+    height: 250px; 
+    overflow-y: auto; 
+}
+
+.open-popup {
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+    z-index: 10;
 }
 
 .popup h2{

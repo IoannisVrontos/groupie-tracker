@@ -6,27 +6,28 @@ function openPopup(id) {
 
   if (artist) {
       const img = popup.querySelector('img');
-      const h2 = popup.querySelector('h2');
-      const p = popup.querySelector('p');
+
+      const locationGrid = document.querySelector('.location-grid');
+      locationGrid.innerHTML = '';
 
       for (let [location, dates] of artist.relations) {
-        p.textContent += `${location}\n`;
-        h2.textContent += `${dates.join('\n')}`;
-      }
-      
+        const locationDiv = document.createElement('div');
+        locationDiv.classList.add('location-item');
+        
+        const locationTitle = document.createElement('h3');
+        locationTitle.textContent = location;
+        
+        const datesParagraph = document.createElement('p');
+        datesParagraph.textContent = dates.join(', ');
 
-      // cards.style.display = 'grid';
-      // cards.style.gridTemplateColumns = 'repeat(4, 1fr)';
-      // cards.style.gap = '2rem';
-      // cards.style.maxWidth = 'var(--container-width)';
-      // cards.style.margin = '0 auto';
-      // cards.style.padding = 'var(--spacing-4)';
-      // book.innerHTML = artist.relations.dates.map(date => `${date}`).join('<br>');
-      // cover.innerHTML = artist.relations.location;
+        locationDiv.appendChild(locationTitle);
+        locationDiv.appendChild(datesParagraph);
+        locationGrid.appendChild(locationDiv);
+      };
+      
       img.src = artist.image;
       
       img.alt = artist.name;
-      h2.textContent = `Thank you, ${artist.name}`;
 
       popup.classList.add('open-popup');
   } else {
