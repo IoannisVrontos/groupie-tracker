@@ -12,8 +12,7 @@ type PageData struct {
 }
 
 var (
-	homeTemplate   *template.Template
-	artistTemplate *template.Template
+	homeTemplate *template.Template
 )
 
 func init() {
@@ -22,20 +21,18 @@ func init() {
 	if err != nil {
 		log.Fatalf("Error parsing home template: %v", err)
 	}
-
-	artistTemplate, err = template.ParseFiles("templates/artist.html")
-	if err != nil {
-		log.Fatalf("Error parsing artist template: %v", err)
-	}
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request, artists []data.Artist) {
-	
-	
-	
-	data := PageData{ Artists: artists}
+	if r.URL.Path != "/" {
+		log.Printf("Page not found: %s", r.URL.Path)
+		ErrorHandler(w, r, http.StatusNotFound, "The page you are looking for does not exist.")
+		return
+	}
+
+	data := PageData{Artists: artists}
 	if err := homeTemplate.Execute(w, data); err != nil {
 		log.Printf("Error executing home template: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		ErrorHandler(w, r, http.StatusInternalServerError, "An error occurred while processing your request.")
 	}
 }
