@@ -6,7 +6,7 @@ import (
 	"groupie-tracker/data"
 	"groupie-tracker/handlers"
 	"net/http"
-	"strconv"
+	"os"
 )
 
 func main() {
@@ -31,12 +31,14 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	fmt.Printf("\rServer is running on port http://localhost:8080 ...\n")
-	port := 8080
-	err = http.ListenAndServe("localhost:8080", nil)
-	for err != nil {
-		port++
-		fmt.Printf("\033[A\rServer is running on port http://localhost:%d ...\n", port)
-		err = http.ListenAndServe(":"+strconv.Itoa(port), nil)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Default port if not specified
+	}
+
+	fmt.Printf("Server is running on port %s...\n", port)
+	err = http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		fmt.Printf("Failed to start server: %v\n", err)
 	}
 }
